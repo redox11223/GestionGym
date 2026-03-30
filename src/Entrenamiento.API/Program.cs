@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Entrenamiento.API.Data;
+using Entrenamiento.API.Services;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -19,6 +22,9 @@ builder.Services.AddDbContext<EntrenamientoDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<IEjerciciosService, EjerciciosServices>();
+
 
 // JWT 
 var key = Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!);
