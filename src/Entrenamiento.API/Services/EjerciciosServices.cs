@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Entrenamiento.API.Services;
 
-public class EjerciciosServices
+public class EjerciciosServices : IEjerciciosService
 {
     private readonly EntrenamientoDbContext _context;
     public EjerciciosServices(EntrenamientoDbContext context)
@@ -60,16 +60,15 @@ public class EjerciciosServices
         await _context.SaveChangesAsync();
         return ExistingEjercicio;
     }
-    public async Task<IEnumerable<Ejercicios>> ObtenerTodosLosEjercicios(){
-        return await _context.Ejercicios.ToListAsync();
+   
+    public async Task EliminarEjercicio(Guid id){
+
+        var Ejercicio =  _context.Ejercicios.FirstOrDefault(e => e.Id == id) ?? throw new KeyNotFoundException("Este ejercicio no existe");
+        _context.Ejercicios.Remove(Ejercicio);
+        await _context.SaveChangesAsync();
     }
-    public Task<Ejercicios> ActualizarEjercicio(Guid id, CreateEjerciciosDto ejercicios){
-        throw new NotImplementedException();
-    }
-    public Task<bool> EliminarEjercicio(Guid id){
-        throw new NotImplementedException();
-    }
-    public Task<bool> ExisteEjercicio(Guid id){
-        throw new NotImplementedException();
+    public async Task<bool> ExisteEjercicio(Guid id){
+        return await _context.Ejercicios.AnyAsync(e => e.Id == id);
+    
     }
 }
