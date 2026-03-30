@@ -63,7 +63,7 @@ public class EjerciciosServices : IEjerciciosService
    
     public async Task EliminarEjercicio(Guid id){
 
-        var Ejercicio =  _context.Ejercicios.FirstOrDefault(e => e.Id == id) ?? throw new KeyNotFoundException("Este ejercicio no existe");
+        var Ejercicio =  await _context.Ejercicios.FirstOrDefaultAsync(e => e.Id == id) ?? throw new KeyNotFoundException("Este ejercicio no existe");
         _context.Ejercicios.Remove(Ejercicio);
         await _context.SaveChangesAsync();
     }
