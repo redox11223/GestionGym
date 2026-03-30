@@ -12,5 +12,5 @@ public class Usuario: EntidadBase
     public required string Telefono { get; set; }
     public bool EsActivo { get; set; }
     public DateTimeOffset UltimoLogin { get; set; }
-
+    public ICollection<UsuarioRol> UsuarioRoles { get; set; } = [];    
 }
