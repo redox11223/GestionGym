@@ -4,7 +4,7 @@ namespace GestionClientes.API.Models;
 
 public class Socios :EntidadBase
 {
-    public int UsuarioId { get; set; }
+    public Guid UsuarioId { get; set; }
     public DateOnly FechaNacimiento { get; set; }
     public required string Genero { get; set; }
     public decimal AlturaCm { get; set; }

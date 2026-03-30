@@ -14,11 +14,11 @@ public class EjerciciosServices : IEjerciciosService
         _context = context;
     }
 
-    public async Task<Ejercicios> AgregarEjercicios(CreateEjerciciosDto ejercicios){
-      var existingEjercicio = _context.Ejercicios.FirstOrDefault(e => e.Nombre == ejercicios.Nombre);
-        if (existingEjercicio != null)
+    public async Task<EjerciciosDto> AgregarEjercicios(CreateEjerciciosDto ejercicios)
+    {
+        if (await ExisteEjercicio(ejercicios.Nombre))
         {
-            throw new Exception("Ya existe un ejercicio con ese nombre.");
+            throw new InvalidOperationException("Ya existe un ejercicio con ese nombre.");
         }
 
         Ejercicios nuevoEjercicio = new()
@@ -27,30 +27,32 @@ public class EjerciciosServices : IEjerciciosService
             Descripcion = ejercicios.Descripcion,
             GrupoMuscular = ejercicios.GrupoMuscular,
             EstaActivo = true
-      };
+        };
 
         _context.Ejercicios.Add(nuevoEjercicio);
         await _context.SaveChangesAsync();
-        return nuevoEjercicio;
+        return MapToDto(nuevoEjercicio);
     }
 
-    public async Task<Ejercicios> ObtenerEjercicioPorId(Guid id){
-        var Ejercicio = await _context.Ejercicios.FirstOrDefaultAsync(e => e.Id == id)?? throw new KeyNotFoundException("Este ejercicio no existe");
-        return new Ejercicios()
-        {
-            Id = Ejercicio.Id,
-            Nombre = Ejercicio.Nombre,
-            Descripcion = Ejercicio.Descripcion,
-            GrupoMuscular = Ejercicio.GrupoMuscular,
-            EstaActivo = Ejercicio.EstaActivo
-        };
+    public async Task<EjerciciosDto> ObtenerEjercicioPorId(Guid id)
+    {
+        var Ejercicio = await _context.Ejercicios.FirstOrDefaultAsync(e => e.Id == id) ?? throw new KeyNotFoundException("Este ejercicio no existe");
+        return MapToDto(Ejercicio);
     }
-    public async Task<IEnumerable<Ejercicios>> ObtenerTodosLosEjercicios(){
-        return await _context.Ejercicios.ToListAsync();
+    public async Task<IEnumerable<EjerciciosDto>> ObtenerTodosLosEjercicios()
+    {
+        return await _context.Ejercicios.Select(e => new EjerciciosDto(
+            e.Id,
+            e.Nombre,
+            e.Descripcion,
+            e.GrupoMuscular,
+            e.EstaActivo
+        )).ToListAsync();
     }
-    public async Task<Ejercicios> ActualizarEjercicio(Guid id, CreateEjerciciosDto ejercicios){
-        var ExistingEjercicio = _context.Ejercicios.FirstOrDefault(e => e.Id == id) ?? throw new KeyNotFoundException("Esta ejercicio no existe");;
-        if(await _context.Ejercicios.AnyAsync(e => e.Nombre == ejercicios.Nombre && e.Id != id))
+    public async Task<EjerciciosDto> ActualizarEjercicio(Guid id, CreateEjerciciosDto ejercicios)
+    {
+        var ExistingEjercicio = _context.Ejercicios.FirstOrDefault(e => e.Id == id) ?? throw new KeyNotFoundException("Esta ejercicio no existe"); ;
+        if (await _context.Ejercicios.AnyAsync(e => e.Nombre == ejercicios.Nombre && e.Id != id))
         {
             throw new InvalidOperationException("Ya existe un ejercicio con ese nombre.");
         }
@@ -58,17 +60,25 @@ public class EjerciciosServices : IEjerciciosService
         ExistingEjercicio.Descripcion = ejercicios.Descripcion;
         ExistingEjercicio.GrupoMuscular = ejercicios.GrupoMuscular;
         await _context.SaveChangesAsync();
-        return ExistingEjercicio;
+        return MapToDto(ExistingEjercicio);
     }
-   
-    public async Task EliminarEjercicio(Guid id){
+    public async Task<bool> EliminarEjercicio(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+    public async Task<bool> ExisteEjercicio(string nombre)
+    {
+        return await _context.Ejercicios.AnyAsync(e => e.Nombre == nombre);
+    }
 
-        var Ejercicio =  await _context.Ejercicios.FirstOrDefaultAsync(e => e.Id == id) ?? throw new KeyNotFoundException("Este ejercicio no existe");
-        _context.Ejercicios.Remove(Ejercicio);
-        await _context.SaveChangesAsync();
-    }
-    public async Task<bool> ExisteEjercicio(Guid id){
-        return await _context.Ejercicios.AnyAsync(e => e.Id == id);
-    
+    private static EjerciciosDto MapToDto(Ejercicios ejercicio)
+    {
+        return new EjerciciosDto(
+            ejercicio.Id,
+            ejercicio.Nombre,
+            ejercicio.Descripcion,
+            ejercicio.GrupoMuscular,
+            ejercicio.EstaActivo
+        );
     }
 }

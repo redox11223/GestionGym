@@ -5,8 +5,7 @@ namespace GestionClientes.API.Models.Dtos;
 public record class CreateSocioDto
 (
     [Required(ErrorMessage = "El campo UsuarioId es obligatorio.")]
-    [Range(1, int.MaxValue, ErrorMessage = "El UsuarioId debe ser un número positivo.")]
-    int UsuarioId,
+    Guid UsuarioId,
 
     [Required(ErrorMessage = "El campo FechaNacimiento es obligatorio.")]
     DateOnly FechaNacimiento,

@@ -2,6 +2,7 @@ namespace Entrenamiento.API.Models.Dtos;
 
 public record class RutinasDto
 (
+    Guid Id,
     int SocioId,
     int EntrenadorId,
     string Nombre,

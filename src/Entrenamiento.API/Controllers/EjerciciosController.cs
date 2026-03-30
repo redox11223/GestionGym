@@ -2,12 +2,9 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Entrenamiento.API.Services;
 using Entrenamiento.API.Models.Dtos;
-using Entrenamiento.API.Models.Entities;
-
-
-
 
 namespace Entrenamiento.API.Controllers;
+
 
 [Route("api/[controller]")]
 [ApiController]
@@ -21,12 +18,12 @@ public class EjerciciosController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Ejercicios>> AgregarEjercicio(CreateEjerciciosDto ejercicios)
+    public async Task<ActionResult<EjerciciosDto>> AgregarEjercicio(CreateEjerciciosDto ejercicios)
     {
         try
         {
             var nuevoEjercicio = await _ejerciciosService.AgregarEjercicios(ejercicios);
-            return CreatedAtAction(nameof(AgregarEjercicio), new { id = nuevoEjercicio.Id }, nuevoEjercicio);
+            return CreatedAtAction(nameof(ObtenerEjercicioPorId), new { id = nuevoEjercicio.Id }, nuevoEjercicio);
         }
         catch (InvalidOperationException ex)
         {
@@ -35,7 +32,7 @@ public class EjerciciosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Ejercicios>>> ObtenerTodosLosEjercicios()
+    public async Task<ActionResult<IEnumerable<EjerciciosDto>>> ObtenerTodosLosEjercicios()
     {
        try
         {
@@ -50,7 +47,7 @@ public class EjerciciosController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Ejercicios>> ObtenerEjercicioPorId(Guid id)
+    public async Task<ActionResult<EjerciciosDto>> ObtenerEjercicioPorId(Guid id)
     {
         try
         {
@@ -64,7 +61,7 @@ public class EjerciciosController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Ejercicios>> ActualizarEjercicio(Guid id, CreateEjerciciosDto ejercicios)
+    public async Task<ActionResult<EjerciciosDto>> ActualizarEjercicio(Guid id, CreateEjerciciosDto ejercicios)
     {
         try
         {

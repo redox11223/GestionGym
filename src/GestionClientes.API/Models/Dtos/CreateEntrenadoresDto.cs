@@ -5,7 +5,7 @@ public record class CreateEntrenadoresDto
 (
     [Required(ErrorMessage = "El ID del usuario es obligatorio.")]
     [Range(1, int.MaxValue, ErrorMessage = "El ID del usuario debe ser un número positivo.")]
-    int UsuarioId,
+    Guid UsuarioId,
 
     [Required(ErrorMessage = "la especialidad es obligatorio.")]
     [MaxLength(100, ErrorMessage = "La especialidad no puede exceder los 100 caracteres.")]

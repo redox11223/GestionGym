@@ -36,4 +36,24 @@ public class EntrenamientoDbContext : DbContext
                       .OnDelete(DeleteBehavior.ClientSetNull); 
             });
         }
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<EntidadBase>();
+
+        foreach (var entry in entries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.FechaCreacion = DateTimeOffset.UtcNow;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.FechaModificacion = DateTimeOffset.UtcNow;
+                    break;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
 }

@@ -16,7 +16,6 @@ public record class CreateRutinasDto
     [RegularExpression(@"^(?!\s*$)[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "El nombre solo puede contener letras y no puede estar vacío o solo espacios")]
     string Nombre,
     
-    [Required(ErrorMessage = "El campo Objetivo es obligatorio.")] 
     [MaxLength(200, ErrorMessage = "El objetivo no puede exceder los 200 caracteres.")]
     [RegularExpression(@"^(?!\s*$)[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "El objetivo solo puede contener letras y no puede estar vacío o solo espacios")]
     string? Objetivo,
