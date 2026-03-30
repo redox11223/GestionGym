@@ -2,10 +2,10 @@ namespace GestionClientes.API.Models.Dtos;
 
 public record class EntrenadoresDto
 (
-    int Id,
-    int UsuarioId,
+    Guid Id,
+    Guid UsuarioId,
     string Especialidad,
     string Certificaciones,
-    DateOnly FechaIngreso,
+    DateOnly? FechaIngreso,
     bool EstaActivo
 );

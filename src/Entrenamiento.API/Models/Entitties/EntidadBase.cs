@@ -1,5 +1,3 @@
-
-
 namespace Entrenamiento.API.Models.Entities;
 
 public abstract class EntidadBase
