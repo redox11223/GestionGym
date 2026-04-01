@@ -59,6 +59,8 @@ public class EjerciciosServices : IEjerciciosService
         ExistingEjercicio.Nombre = ejercicios.Nombre;
         ExistingEjercicio.Descripcion = ejercicios.Descripcion;
         ExistingEjercicio.GrupoMuscular = ejercicios.GrupoMuscular;
+        ExistingEjercicio.EstaActivo = ejercicios.EstaActivo;
+        _context.Ejercicios.Update(ExistingEjercicio);
         await _context.SaveChangesAsync();
         return MapToDto(ExistingEjercicio);
     }

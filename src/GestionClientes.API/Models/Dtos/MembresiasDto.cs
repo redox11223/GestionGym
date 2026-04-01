@@ -2,7 +2,7 @@ namespace GestionClientes.API.Models.Dtos;
 
 public record class MembresiasDto
 (
-    int Id,
+    Guid Id,
     string Nombre,
     string Descripcion,
     int DuracionDias,

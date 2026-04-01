@@ -10,7 +10,7 @@ public record class CreateMembresiasDto
     string  Nombre,
 
     [Required(ErrorMessage = "El campo Descripcion es obligatorio.")]
-    [MaxLength(200, ErrorMessage = "La descripción no puede exceder los 200 caracteres.")]  
+    [MaxLength(300, ErrorMessage = "La descripción no puede exceder los 300 caracteres.")]  
     string  Descripcion,
 
     [Required(ErrorMessage = "El campo DuracionDias es obligatorio.")]

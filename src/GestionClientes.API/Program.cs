@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 var connectionString = config.GetConnectionString("GestionClientesDb") ?? throw new InvalidOperationException("Connection string 'GestionClientesDb' not found.");
@@ -20,6 +22,9 @@ builder.Services.AddScoped<IEntrenadorService, EntrenadorService>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+
+builder.Services.AddScoped<IMembresiaService, MembresiaService>();
 
 // JWT 
 var key = Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!);
