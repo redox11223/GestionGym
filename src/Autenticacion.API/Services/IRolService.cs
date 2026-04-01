@@ -9,4 +9,5 @@ public interface IRolService
     Task<RolDto> CrearRolAsync(CreateRolDto createRolDto);
     Task<IEnumerable<RolDto>> ObtenerRolesAsync();
     Task<RolDto> ActualizarRolAsync(Guid id, CreateRolDto updateRolDto);
+    Task<IEnumerable<RolDto>> ObtenerRolesValidosAsync(IEnumerable<Guid> rolIds);
 }

@@ -1,5 +1,6 @@
 using System.Text;
 using Autenticacion.API.Data;
+using Autenticacion.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,12 +9,20 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 var connectionString = config.GetConnectionString("AutenticacionDb");
 
-var config = builder.Configuration;
-var connectionString = config.GetConnectionString("AutenticacionDb");
 
 //BD
 builder.Services.AddDbContext<AutenticacionDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+//Servicios
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IRolService, RolService>();
+//Cliente HTTP para comunicarse con GestionCliente
+builder.Services.AddHttpClient<IGestionCliente, GestionCliente>(client=>
+{
+    client.BaseAddress = new Uri(config["Services:GestionCliente"]!);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 // JWT 
 var key = Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!);
@@ -43,33 +52,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
-// JWT 
-var key = Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!);
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.MapInboundClaims = false;    
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = config["Jwt:Issuer"],
-
-            ValidateAudience = true,
-            ValidAudience = config["Jwt:Audience"],
-
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            // ESTO ES CLAVE: Mapea los nombres de claims cortos a las propiedades de User
-            NameClaimType = "sub",  // Ahora User.Identity.Name leerá el ID del 'sub'
-            RoleClaimType = "role"  // Ahora [Authorize(Roles="...")] leerá del claim 'role'            
-        };
-    });
-
 
 
 var app = builder.Build();

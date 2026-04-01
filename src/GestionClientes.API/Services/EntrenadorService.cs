@@ -13,17 +13,65 @@ public class EntrenadorService : IEntrenadorService
     {
         _context = context;
     }
+
+    public async Task<EntrenadoresDto> UpsertEntrenadorAsync(Guid id, CreateEntrenadoresDto createEntrenadorDto)
+    {
+        var entrenadorExistente = await _context.Entrenadores.FirstOrDefaultAsync(e => e.Id == id);
+        if (entrenadorExistente != null)
+        {
+            var nombreNormalizado = createEntrenadorDto.Especialidad.Trim().ToLower();
+            entrenadorExistente.UsuarioId = createEntrenadorDto.UsuarioId;
+            entrenadorExistente.Especialidad = nombreNormalizado;
+            entrenadorExistente.Certificaciones = createEntrenadorDto.Certificaciones;
+            entrenadorExistente.FechaIngreso = createEntrenadorDto.FechaIngreso;
+            entrenadorExistente.EstaActivo = createEntrenadorDto.EstaActivo;
+
+            _context.Entrenadores.Update(entrenadorExistente);
+            await _context.SaveChangesAsync();
+
+            return MapToDto(entrenadorExistente);
+        }
+        else
+        {
+            var nombreNormalizado = createEntrenadorDto.Especialidad.Trim().ToLower();
+            var entrenador = new Entrenadores
+            {
+                UsuarioId = createEntrenadorDto.UsuarioId,
+                Especialidad = nombreNormalizado,
+                Certificaciones = createEntrenadorDto.Certificaciones,
+                FechaIngreso = createEntrenadorDto.FechaIngreso,
+                EstaActivo = true
+            };
+
+            _context.Entrenadores.Add(entrenador);
+            await _context.SaveChangesAsync();
+            return MapToDto(entrenador);
+        }
+    }
     public async Task<EntrenadoresDto> ActualizarEntrenadorAsync(Guid id, CreateEntrenadoresDto updateEntrenadorDto)
     {
-        throw new NotImplementedException();
+        var nombreNormalizado = updateEntrenadorDto.Especialidad.Trim().ToLower();
+        var entrenador = await _context.Entrenadores.FirstOrDefaultAsync(e => e.Id == id) ?? throw new KeyNotFoundException($"No se encontró el entrenador con id {id}");
+        entrenador.UsuarioId = updateEntrenadorDto.UsuarioId;
+        entrenador.Especialidad = nombreNormalizado;
+        entrenador.Certificaciones = updateEntrenadorDto.Certificaciones;
+        entrenador.FechaIngreso = updateEntrenadorDto.FechaIngreso;
+        entrenador.EstaActivo = updateEntrenadorDto.EstaActivo;
+
+        _context.Entrenadores.Update(entrenador);
+        await _context.SaveChangesAsync();
+
+        return MapToDto(entrenador);
+
     }
 
     public async Task<EntrenadoresDto> CrearEntrenadorAsync(CreateEntrenadoresDto createEntrenadorDto)
     {
+        var nombreNormalizado = createEntrenadorDto.Especialidad.Trim().ToLower();
         var entrenador = new Entrenadores
         {
             UsuarioId = createEntrenadorDto.UsuarioId,
-            Especialidad = createEntrenadorDto.Especialidad,
+            Especialidad = nombreNormalizado,
             Certificaciones = createEntrenadorDto.Certificaciones,
             FechaIngreso = createEntrenadorDto.FechaIngreso,
             EstaActivo = true
@@ -37,7 +85,10 @@ public class EntrenadorService : IEntrenadorService
 
     public async Task<bool> EliminarEntrenadorAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var entrenador = await _context.Entrenadores.FirstOrDefaultAsync(e => e.Id == id) ?? throw new KeyNotFoundException($"No se encontró el entrenador con id {id}");
+        _context.Entrenadores.Remove(entrenador);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<EntrenadoresDto> ObtenerEntrenadorByIdAsync(Guid id)
@@ -48,21 +99,20 @@ public class EntrenadorService : IEntrenadorService
 
     public async Task<IEnumerable<EntrenadoresDto>> ObtenerEntrenadoresAsync()
     {
-         return await _context.Entrenadores.Select(e=>new EntrenadoresDto
-      (
-        e.Id,
-        e.UsuarioId,
-        e.Especialidad,
-        e.Certificaciones,
-        e.FechaIngreso,
-        e.EstaActivo
-      )).ToListAsync();      
+        return await _context.Entrenadores.Select(e => new EntrenadoresDto
+     (
+       e.Id,
+       e.UsuarioId,
+       e.Especialidad,
+       e.Certificaciones,
+       e.FechaIngreso,
+       e.EstaActivo
+     )).ToListAsync();
     }
-
     private static EntrenadoresDto MapToDto(Entrenadores entrenador)
     {
         return new EntrenadoresDto
-        (   entrenador.Id,
+        (entrenador.Id,
             entrenador.UsuarioId,
             entrenador.Especialidad,
             entrenador.Certificaciones,

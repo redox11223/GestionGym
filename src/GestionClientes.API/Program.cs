@@ -1,12 +1,21 @@
 using System.Text;
+using GestionClientes.API.Data;
+using GestionClientes.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 var connectionString = config.GetConnectionString("GestionClientesDb") ?? throw new InvalidOperationException("Connection string 'GestionClientesDb' not found.");
 
-// Add services to the container.
+//Bd
+builder.Services.AddDbContext<GestionClientesDbContext>(options =>
+    options.UseSqlServer(connectionString));
+//Servicios
+builder.Services.AddScoped<ISocioService, SocioService>();
+builder.Services.AddScoped<IEntrenadorService, EntrenadorService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -48,6 +57,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

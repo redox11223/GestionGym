@@ -8,5 +8,6 @@ public interface IUsuarioService
     Task<UsuarioDto> UsuarioPorIdAsync(Guid id);
     Task<IEnumerable<UsuarioDto>> ObtenerUsuariosAsync();
     Task<bool> UsuarioExisteAsync(string correo);
-    Task<UsuarioDto> CrearUsuarioAsync(CreateUsuarioDto createUsuarioDto);
+    Task<UsuarioDetalladoDto> CrearUsuarioAsync(CreateUsuarioDto createUsuarioDto);
+    Task<UsuarioDetalladoDto> ActualizarUsuarioAsync(Guid id, CreateUsuarioDto updateUsuarioDto);
 }
