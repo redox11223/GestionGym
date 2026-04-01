@@ -63,9 +63,18 @@ public class RolService : IRolService
         return MapToRolDto(rol);
     }
 
+     public async Task<IEnumerable<RolDto>> ObtenerRolesValidosAsync(IEnumerable<Guid> rolIds)
+    {
+        return await _context.Roles
+            .Where(r => rolIds.Contains(r.Id))
+            .Select(r => new RolDto(r.Id, r.Nombre))
+            .ToListAsync();
+    }
+    
     private static RolDto MapToRolDto(Rol rol)
     {
-        return new RolDto(rol.Id, rol.Nombre);
+        return new RolDto(rol.Id, rol.NombreNormalizado);
         
     }
+
 }

@@ -22,7 +22,10 @@ public record class CreateUsuarioDto(
 
     [Required( ErrorMessage = "Los roles son obligatorios.")]
     [MinLength(1, ErrorMessage = "Debe asignar al menos un rol.")]
-    IEnumerable<Guid> Roles
+    IEnumerable<Guid> Roles,
+
+    CreateSocioDto? Socio,
+    CreateEntrenadorDto? Entrenador
 )
 { }
 

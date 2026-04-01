@@ -10,4 +10,5 @@ public interface IEntrenadorService
     Task<IEnumerable<EntrenadoresDto>> ObtenerEntrenadoresAsync();
     Task<EntrenadoresDto> ActualizarEntrenadorAsync(Guid id, CreateEntrenadoresDto updateEntrenadorDto);
     Task<bool> EliminarEntrenadorAsync(Guid id);
+    Task<EntrenadoresDto> UpsertEntrenadorAsync(Guid id, CreateEntrenadoresDto updateEntrenadorDto);
 }

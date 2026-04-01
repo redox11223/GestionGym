@@ -2,8 +2,8 @@ namespace GestionClientes.API.Models.Dtos;
 
 public record class SocioDto
 (
-    int Id,
-    int UsuarioId,
+    Guid Id,
+    Guid UsuarioId,
     DateOnly FechaNacimiento,
     string Genero,
     decimal AlturaCm,
