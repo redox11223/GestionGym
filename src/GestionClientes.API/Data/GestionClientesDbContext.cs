@@ -38,5 +38,9 @@ public class GestionClientesDbContext:DbContext
                   .OnDelete(DeleteBehavior.ClientSetNull); 
         });
 
+        modelBuilder.Entity<Membresias>()
+            .Property(m => m.Precio)
+            .HasPrecision(18, 2);
+
     }
 }
