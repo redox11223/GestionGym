@@ -13,7 +13,7 @@ public class GestionCliente : IGestionCliente
     
     public async Task<CreateSocioDto> CrearSocio(CreateSocioDto crearSocioDto)
     {
-        var response= await _httpClient.PostAsJsonAsync("api/socios", crearSocioDto);
+        var response= await _httpClient.PostAsJsonAsync("api/socio", crearSocioDto);
         if(!response.IsSuccessStatusCode)
         {
             throw new Exception("Error al crear socio");
@@ -23,7 +23,7 @@ public class GestionCliente : IGestionCliente
     }
     public async Task<CreateEntrenadorDto> CrearEntrenador(CreateEntrenadorDto crearEntrenadorDto)
     {
-        var response= await _httpClient.PostAsJsonAsync("api/entrenadores", crearEntrenadorDto);
+        var response= await _httpClient.PostAsJsonAsync("api/entrenador", crearEntrenadorDto);
         if(!response.IsSuccessStatusCode)
         {
             throw new Exception("Error al crear entrenador");
@@ -33,7 +33,7 @@ public class GestionCliente : IGestionCliente
     }
     public async Task<CreateSocioDto> UpsertSocio(CreateSocioDto actualizarSocioDto)
     {
-        var response= await _httpClient.PutAsJsonAsync($"api/socios/upsert/{actualizarSocioDto.UsuarioId}", actualizarSocioDto);
+        var response= await _httpClient.PutAsJsonAsync($"api/socio/upsert/{actualizarSocioDto.UsuarioId}", actualizarSocioDto);
         if(!response.IsSuccessStatusCode)
         {
             throw new Exception("Error al actualizar socio");
@@ -44,7 +44,7 @@ public class GestionCliente : IGestionCliente
 
     public async Task<CreateEntrenadorDto> UpsertEntrenador(CreateEntrenadorDto actualizarEntrenadorDto)
     {
-        var response= await _httpClient.PutAsJsonAsync($"api/entrenadores/upsert/{actualizarEntrenadorDto.UsuarioId}", actualizarEntrenadorDto);
+        var response= await _httpClient.PutAsJsonAsync($"api/entrenador/upsert/{actualizarEntrenadorDto.UsuarioId}", actualizarEntrenadorDto);
         if(!response.IsSuccessStatusCode)
         {
             throw new Exception("Error al actualizar entrenador");

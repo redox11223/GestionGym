@@ -1,6 +1,5 @@
 using Autenticacion.API.Models.Dtos;
 using Autenticacion.API.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Autenticacion.API.Controllers

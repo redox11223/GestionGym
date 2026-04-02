@@ -13,5 +13,5 @@ public class Socios :EntidadBase
     public required string EmergenciaTelefono { get; set; }
     public DateOnly FechaRegistro { get; set; }
     public bool EstaActivo { get; set; }
-
+    public ICollection<SocioEntrenador> SocioEntrenadores { get; set; } = [];
 }

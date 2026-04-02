@@ -28,14 +28,14 @@ public class GestionClientesDbContext:DbContext
             entity.HasKey(se => new { se.SocioId, se.EntrenadorId });
 
             entity.HasOne<Socios>()
-                  .WithMany() 
+                  .WithMany(s=> s.SocioEntrenadores) 
                   .HasForeignKey(se => se.SocioId)
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne<Entrenadores>()
-                  .WithMany()
+                  .WithMany(e => e.SocioEntrenadores)
                   .HasForeignKey(se => se.EntrenadorId)
-                  .OnDelete(DeleteBehavior.ClientSetNull); 
+                  .OnDelete(DeleteBehavior.Cascade); 
         });
 
         modelBuilder.Entity<Membresias>()

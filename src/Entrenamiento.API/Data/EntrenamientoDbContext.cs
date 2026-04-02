@@ -26,7 +26,7 @@ public class EntrenamientoDbContext : DbContext
                 entity.ToTable(t => t.HasCheckConstraint("CK_RutinaEjercicios_Orden", "[Orden] > 0"));
 
                 entity.HasOne<Rutinas>()
-                      .WithMany() 
+                      .WithMany(r=> r.RutinaEjercicios) 
                       .HasForeignKey(re => re.RutinaId)
                       .OnDelete(DeleteBehavior.Cascade);
 

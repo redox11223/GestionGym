@@ -97,8 +97,6 @@ public class UsuarioService : IUsuarioService
     public async Task<IEnumerable<UsuarioDto>> ObtenerUsuariosAsync()
     {
         return await _dbContext.Usuarios
-            .Include(u => u.UsuarioRoles)
-                .ThenInclude(ur => ur.Rol)
             .Select(u => new UsuarioDto(
                 u.Id,
                 u.Nombre,
@@ -106,6 +104,7 @@ public class UsuarioService : IUsuarioService
                 u.Telefono,
                 u.UsuarioRoles.Select(ur => ur.Rol.Nombre)
             ))
+            .AsNoTracking()
             .ToListAsync();
     }
     public async Task<UsuarioDetalladoDto> ActualizarUsuarioAsync(Guid id, CreateUsuarioDto updateUsuarioDto)
@@ -171,8 +170,6 @@ public class UsuarioService : IUsuarioService
             await transaction.RollbackAsync();
             throw new InvalidOperationException($"Error en microservicio: {ex.Message}");
         }
-
-        throw new NotImplementedException();
 
     }
     private static UsuarioDto MapToUsuarioDto(Usuario usuario)
