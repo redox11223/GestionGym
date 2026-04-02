@@ -2,7 +2,6 @@ using System;
 using GestionClientes.API.Data;
 using GestionClientes.API.Models;
 using GestionClientes.API.Models.Dtos;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionClientes.API.Services;

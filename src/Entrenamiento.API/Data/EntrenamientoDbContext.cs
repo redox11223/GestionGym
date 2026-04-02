@@ -11,14 +11,14 @@ public class EntrenamientoDbContext : DbContext
 
     public DbSet<Ejercicios> Ejercicios { get; set; }
     public DbSet<Rutinas> Rutinas { get; set; }
-    public DbSet<Rutina_Ejercicios> Rutina_Ejercicios { get; set; }
+    public DbSet<RutinaEjercicios> RutinaEjercicios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuración de la entidad Rutina_Ejercicios
-            modelBuilder.Entity<Rutina_Ejercicios>(entity =>
+            // Configuración de la entidad RutinaEjercicios
+            modelBuilder.Entity<RutinaEjercicios>(entity =>
             {
                
                 entity.HasKey(re => new { re.RutinaId, re.Orden });

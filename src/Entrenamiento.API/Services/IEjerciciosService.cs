@@ -9,6 +9,7 @@ public interface IEjerciciosService
     Task<EjerciciosDto> AgregarEjercicios(CreateEjerciciosDto ejercicios);
     Task<EjerciciosDto> ObtenerEjercicioPorId(Guid id);
     Task<IEnumerable<EjerciciosDto>> ObtenerTodosLosEjercicios();
+    Task<IEnumerable<EjerciciosDto>> ObtenerEjerciciosValidos(IEnumerable<Guid> idsEjercicios);
     Task<EjerciciosDto> ActualizarEjercicio(Guid id, CreateEjerciciosDto ejercicios);
     Task<bool> EliminarEjercicio(Guid id);
     Task<bool> ExisteEjercicio(string nombre);

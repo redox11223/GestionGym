@@ -1,12 +1,9 @@
-
-
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Entrenamiento.API.Data;
 using Entrenamiento.API.Services;
-
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,8 +20,15 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+//Servicios
 builder.Services.AddScoped<IEjerciciosService, EjerciciosServices>();
-
+builder.Services.AddScoped<IRutinaService, RutinaService>();
+//Cliente HTTP para comunicarse con GestionCliente
+builder.Services.AddHttpClient<IGestionCliente, GestionCliente>(client=>
+{
+    client.BaseAddress = new Uri(config["Services:GestionCliente"]!);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 // JWT 
 var key = Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!);

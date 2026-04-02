@@ -73,6 +73,11 @@ public class EjerciciosServices : IEjerciciosService
         return await _context.Ejercicios.AnyAsync(e => e.Nombre == nombre);
     }
 
+    public async Task<IEnumerable<EjerciciosDto>> ObtenerEjerciciosValidos(IEnumerable<Guid> idsEjercicios)
+    {
+        var ejercicios = await _context.Ejercicios.Where(e => idsEjercicios.Contains(e.Id)).ToListAsync();
+        return ejercicios.Select(MapToDto);
+    }
     private static EjerciciosDto MapToDto(Ejercicios ejercicio)
     {
         return new EjerciciosDto(
@@ -83,4 +88,5 @@ public class EjerciciosServices : IEjerciciosService
             ejercicio.EstaActivo
         );
     }
+
 }

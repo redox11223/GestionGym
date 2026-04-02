@@ -3,11 +3,12 @@ namespace Entrenamiento.API.Models.Dtos;
 public record class RutinasDto
 (
     Guid Id,
-    int SocioId,
-    int EntrenadorId,
+    Guid SocioId,
+    Guid EntrenadorId,
     string Nombre,
     string? Objetivo,
     DateTime FechaInicio,
     DateTime FechaFin,
-    bool Activa
+    bool Activa,
+    IEnumerable<EjerciciosDto> Ejercicios
 );
