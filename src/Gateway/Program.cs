@@ -1,28 +1,37 @@
-using Scalar.AspNetCore;
+    using Scalar.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(args);
+    var builder = WebApplication.CreateBuilder(args);
 
-// 1. Registro de YARP (Lee la sección "ReverseProxy" del appsettings.json)
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    // 1. Registro de YARP (Lee la sección "ReverseProxy" del appsettings.json)
+    builder.Services.AddReverseProxy()
+        .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-var app = builder.Build();
+    var app = builder.Build();
 
-// 2. Seguridad básica
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 
-//Scalar
-app.MapScalarApiReference(options=>
+    //Scalar
+    if (app.Environment.IsDevelopment())
     {
-    options.Title = "Gym Microservices API";
+        app.MapScalarApiReference(options =>
+        {
+            options.Title = "Gym Microservices API";
 
-    options.AddDocument("Autenticacion","https://localhost:5069/openapi/v1.json");
-    options.AddDocument("Entrenamiento","https://localhost:5141/openapi/v1.json");
-    options.AddDocument("Clientes","https://localhost:5071/openapi/v1.json");
-});
+            // 1. ESTO ES LO MÁS IMPORTANTE:
+            // Le decimos a Scalar: "Para cualquier documento, busca el JSON en /{documentName}/openapi/v1.json"
+            options.OpenApiRoutePattern = "/{documentName}/openapi/v1.json";
+            
+            // 2. Registramos los documentos con nombres que COINCIDAN con tus prefijos de YARP
+            // Tus rutas en appsettings son: /auth/, /entrenamiento/, /gestion/
+            options.AddDocument("auth", "");
+            options.AddDocument("entrenamiento", "");
+            options.AddDocument("gestion", "");
+        });
+    }
 
-// 3. ¡IMPORTANTE! El orden importa: MapReverseProxy debe ir al final
-// para que no interfiera con otras rutas si las tuvieras.
-app.MapReverseProxy();
 
-app.Run();
+    // 3. ¡IMPORTANTE! El orden importa: MapReverseProxy debe ir al final
+    // para que no interfiera con otras rutas si las tuvieras.
+    app.MapReverseProxy();
+
+    app.Run();

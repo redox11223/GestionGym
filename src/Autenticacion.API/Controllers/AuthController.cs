@@ -37,7 +37,7 @@ namespace Autenticacion.API.Controllers
             
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminGestion")]
         [HttpPost("register")]
         public async Task<IActionResult> CrearUsuario(CreateUsuarioDto request)
         {

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 namespace Autenticacion.API.Models.Dtos;
 
 public record class CreateSocioDto(
-    Guid UsuarioId,
 
     [Required(ErrorMessage = "El campo FechaNacimiento es obligatorio.")]
     DateOnly FechaNacimiento,
@@ -13,29 +12,32 @@ public record class CreateSocioDto(
     [RegularExpression(@"^(?!\s*$)[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "El género solo puede contener letras y no puede estar vacío o solo espacios")]
     string Genero,
 
-    [Required(ErrorMessage = "El campo AlturaCm es obligatorio.")]
-    [Range(0.01, double.MaxValue, ErrorMessage = "La altura debe ser un número positivo.")]
-    decimal AlturaCm,
+    [Range(50, 250, ErrorMessage = "La altura debe estar entre 50 y 250 cm.")]
+    double? AlturaCm,
 
-    [Required(ErrorMessage = "El campo PesoKg es obligatorio.")]
-    [Range(0.01, double.MaxValue, ErrorMessage = "El peso debe ser un número positivo.")]
-    decimal PesoKg,
+    [Range(20, 300, ErrorMessage = "El peso debe estar entre 20 y 300 kg.")]
+    double? PesoKg,
 
-    [Required(ErrorMessage = "El campo Nombre de emergencia es obligatorio.")]
     [MaxLength(100, ErrorMessage = "El nombre de emergencia no puede exceder los 100 caracteres.")]
-    [RegularExpression(@"^(?!\s*$)[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "El nombre de emergencia solo puede contener letras y no puede estar vacío o solo espacios")]
-    string EmergenciaNombre,
+    [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$", ErrorMessage = "El nombre de emergencia solo puede contener letras")]
+    string? EmergenciaNombre,
 
-    [Required(ErrorMessage = "El campo Telefono de emergencia es obligatorio.")]
     [Phone(ErrorMessage = "El teléfono de emergencia no tiene un formato válido.")]
-    string EmergenciaTelefono,
+    string? EmergenciaTelefono
+    
 
-    [Required(ErrorMessage = "El campo FechaRegistro es obligatorio.")]
-    DateOnly FechaRegistro,
-
-    [Required(ErrorMessage = "El campo EstaActivo es obligatorio.")]
-    bool EstaActivo
-)
+) : IValidatableObject
 {
-
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if(FechaNacimiento > DateOnly.FromDateTime(DateTime.Today))
+        {
+            yield return new ValidationResult("La fecha de nacimiento no puede ser en el futuro.", [nameof(FechaNacimiento)]);
+        }
+        int edadMinima = 18;
+        if(FechaNacimiento > DateOnly.FromDateTime(DateTime.Today.AddYears(-edadMinima)))
+        {
+            yield return new ValidationResult($"El socio debe tener al menos {edadMinima} años.", [nameof(FechaNacimiento)]);
+        }
+    }
 }

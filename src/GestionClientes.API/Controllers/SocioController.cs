@@ -1,12 +1,13 @@
 using GestionClientes.API.Models.Dtos;
 using GestionClientes.API.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionClientes.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] 
     public class SocioController : ControllerBase
     {
         private readonly ISocioService _socioService;
@@ -60,6 +61,7 @@ namespace GestionClientes.API.Controllers
                 return NotFound(ex.Message);
             }
         }
+        [Authorize(Policy = "AdminGestion")]
         [HttpPut("upsert/{id}")]
         public async Task<IActionResult> UpsertSocio(Guid id, [FromBody] CreateSocioDto createSocioDto)
         {

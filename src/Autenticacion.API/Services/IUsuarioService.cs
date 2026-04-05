@@ -10,4 +10,5 @@ public interface IUsuarioService
     Task<bool> UsuarioExisteAsync(string correo);
     Task<UsuarioDetalladoDto> CrearUsuarioAsync(CreateUsuarioDto createUsuarioDto);
     Task<UsuarioDetalladoDto> ActualizarUsuarioAsync(Guid id, CreateUsuarioDto updateUsuarioDto);
+    Task EliminarUsuarioAsync(Guid id);
 }

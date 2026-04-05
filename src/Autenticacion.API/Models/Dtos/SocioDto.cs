@@ -1,7 +1,6 @@
-namespace GestionClientes.API.Models.Dtos;
+namespace Autenticacion.API.Models.Dtos;
 
-public record class SocioDto
-(
+public record class SocioDto(
     Guid Id,
     Guid UsuarioId,
     DateOnly FechaNacimiento,
@@ -11,4 +10,7 @@ public record class SocioDto
     string? EmergenciaNombre,
     string? EmergenciaTelefono,
     DateTimeOffset FechaRegistro
-);
+)
+{
+    
+}

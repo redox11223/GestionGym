@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 namespace Autenticacion.API.Models.Dtos;
 
 public record class LoginDto(
-    [Required(ErrorMessage = "El correo es obligatorio.")]
-    [EmailAddress(ErrorMessage = "El correo no es válido.")]
+    [Required(ErrorMessage = "Credenciales inválidas.")]
+    [EmailAddress(ErrorMessage = "Credenciales inválidas.")]
     string Correo,
     
-    [Required(ErrorMessage = "La contraseña es obligatoria.")]
-    [MinLength(8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres.")]
+    [Required(ErrorMessage = "Credenciales inválidas.")]
+    [MinLength(8, ErrorMessage = "Credenciales inválidas.")]
     string Contrasena
 )
 {

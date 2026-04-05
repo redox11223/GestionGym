@@ -1,11 +1,13 @@
 using Autenticacion.API.Models.Dtos;
 using Autenticacion.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Autenticacion.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "AdminGestion")]
     public class RolController : ControllerBase
     {
         private readonly IRolService _rolService;
@@ -64,6 +66,19 @@ namespace Autenticacion.API.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarRol(Guid id)
+        {
+            try
+            {
+                await _rolService.EliminarRolAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
         }
     }

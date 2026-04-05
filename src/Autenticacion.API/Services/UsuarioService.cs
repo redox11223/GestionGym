@@ -33,9 +33,9 @@ public class UsuarioService : IUsuarioService
 
         var usuario = new Usuario
         {
-            Nombre = createUsuarioDto.Nombre,
+            Nombre = createUsuarioDto.Nombre.Trim(),
             NombreNormalizado = createUsuarioDto.Nombre.Trim().ToLower(),
-            Correo = createUsuarioDto.Correo,
+            Correo = createUsuarioDto.Correo.Trim(),
             CorreoNormalizado = createUsuarioDto.Correo.Trim().ToLower(),
             ContrasenaHash = BCrypt.Net.BCrypt.HashPassword(createUsuarioDto.Contrasena),
             Telefono = createUsuarioDto.Telefono,
@@ -48,7 +48,7 @@ public class UsuarioService : IUsuarioService
             RolId = rol.Id,
             FechaAsignacion = DateTimeOffset.UtcNow
         }).ToList();
-        var rolesNombres = roles.Select(r => r.Nombre).ToList();
+        var rolesNombres = roles.Select(r => r.NombreNormalizado).ToList();
         //using evita que se quede abierta la transacción en caso de error,
         // y asegura que se cierre correctamente al finalizar el bloque    
         using var transaction = await _dbContext.Database.BeginTransactionAsync();
@@ -56,27 +56,27 @@ public class UsuarioService : IUsuarioService
         {
             _dbContext.Usuarios.Add(usuario);
             await _dbContext.SaveChangesAsync();
-            CreateSocioDto? socioCreado = null;
-            CreateEntrenadorDto? entrenadorCreado = null;
+            SocioDto? socioCreado = null;
+            EntrenadorDto? entrenadorCreado = null;
             if (createUsuarioDto.Socio != null && rolesNombres.Contains(RolesUsuario.Socio))
             {
-                var dto = createUsuarioDto.Socio with { UsuarioId = usuario.Id };
-                socioCreado= await _gestionCliente.CrearSocio(dto);
+                var dto = createUsuarioDto.Socio;
+                socioCreado = await _gestionCliente.UpsertSocio(usuario.Id, dto);
             }
             if (createUsuarioDto.Entrenador != null && rolesNombres.Contains(RolesUsuario.Entrenador))
             {
-                var dto = createUsuarioDto.Entrenador with { UsuarioId = usuario.Id };
-                entrenadorCreado = await _gestionCliente.CrearEntrenador(dto);
+                var dto = createUsuarioDto.Entrenador ;
+                entrenadorCreado = await _gestionCliente.UpsertEntrenador(usuario.Id, dto);
             }
             await transaction.CommitAsync();
-            return MapToUsuarioDetalladoDto(usuario, socioCreado, entrenadorCreado);
+            return MapToUsuarioDetalladoDto(usuario, rolesNombres, socioCreado, entrenadorCreado);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            throw new InvalidOperationException($"Error en microservicio: {ex.Message}");
+            throw new InvalidOperationException($"Error en microservicio: {ex.Message}", ex);
         }
-        
+
     }
 
     public async Task<UsuarioDto> UsuarioPorIdAsync(Guid id)
@@ -102,7 +102,7 @@ public class UsuarioService : IUsuarioService
                 u.Nombre,
                 u.Correo,
                 u.Telefono,
-                u.UsuarioRoles.Select(ur => ur.Rol.Nombre)
+                u.UsuarioRoles.Select(ur => ur.Rol.NombreNormalizado)
             ))
             .AsNoTracking()
             .ToListAsync();
@@ -112,7 +112,7 @@ public class UsuarioService : IUsuarioService
         var usuario = await _dbContext.Usuarios
             .Include(u => u.UsuarioRoles)
             .FirstOrDefaultAsync(u => u.Id == id) ?? throw new KeyNotFoundException($"No se encontró el usuario con id {id}");
-        
+
         string nombreLimpio = updateUsuarioDto.Nombre.Trim().ToLower();
         string correoLimpio = updateUsuarioDto.Correo.Trim().ToLower();
 
@@ -120,20 +120,20 @@ public class UsuarioService : IUsuarioService
         {
             throw new InvalidOperationException($"Ya existe un usuario con el correo {updateUsuarioDto.Correo}");
         }
-        
+
         var roles = await _rolService.ObtenerRolesValidosAsync(updateUsuarioDto.Roles);
         if (roles.Count() != updateUsuarioDto.Roles.Count())
         {
             throw new InvalidOperationException("Uno o más roles asignados no son válidos");
         }
-        
-        var rolesNombres = roles.Select(r => r.Nombre).ToList();
+
+        var rolesNombres = roles.Select(r => r.NombreNormalizado).ToList();
         using var transaction = await _dbContext.Database.BeginTransactionAsync();
         try
         {
-            usuario.Nombre = updateUsuarioDto.Nombre;
+            usuario.Nombre = updateUsuarioDto.Nombre.Trim();
             usuario.NombreNormalizado = nombreLimpio;
-            usuario.Correo = updateUsuarioDto.Correo;
+            usuario.Correo = updateUsuarioDto.Correo.Trim();
             usuario.CorreoNormalizado = correoLimpio;
             if (!string.IsNullOrWhiteSpace(updateUsuarioDto.Contrasena))
             {
@@ -147,30 +147,38 @@ public class UsuarioService : IUsuarioService
                 FechaAsignacion = DateTimeOffset.UtcNow
             }).ToList();
             await _dbContext.SaveChangesAsync();
-            
+
             //microservicios llamadas
-            CreateSocioDto? socioCreado = null;
-            CreateEntrenadorDto? entrenadorCreado = null;
-             if (updateUsuarioDto.Entrenador != null && rolesNombres.Contains(RolesUsuario.Entrenador))
+            SocioDto? socioCreado = null;
+            EntrenadorDto? entrenadorCreado = null;
+            if (updateUsuarioDto.Entrenador != null && rolesNombres.Contains(RolesUsuario.Entrenador))
             {
-                var dto = updateUsuarioDto.Entrenador with { UsuarioId = usuario.Id };
-                entrenadorCreado = await _gestionCliente.UpsertEntrenador(dto);
+                var dto = updateUsuarioDto.Entrenador;
+                entrenadorCreado = await _gestionCliente.UpsertEntrenador(usuario.Id, dto);
             }
             if (updateUsuarioDto.Socio != null && rolesNombres.Contains(RolesUsuario.Socio))
             {
-                var dto = updateUsuarioDto.Socio with { UsuarioId = usuario.Id };
-                socioCreado = await _gestionCliente.UpsertSocio(dto);
+                var dto = updateUsuarioDto.Socio ;
+                socioCreado = await _gestionCliente.UpsertSocio(usuario.Id, dto);
             }
 
             await transaction.CommitAsync();
-            return MapToUsuarioDetalladoDto(usuario, socioCreado, entrenadorCreado);
+            return MapToUsuarioDetalladoDto(usuario, rolesNombres, socioCreado, entrenadorCreado);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            throw new InvalidOperationException($"Error en microservicio: {ex.Message}");
+            throw new InvalidOperationException($"Error en microservicio: {ex.Message}", ex);
         }
 
+    }
+    public async Task EliminarUsuarioAsync(Guid id)
+    {
+        var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.Id == id)?? 
+        throw new KeyNotFoundException($"No se encontró el usuario con id {id}");
+
+        _dbContext.Usuarios.Remove(usuario);
+        await _dbContext.SaveChangesAsync();
     }
     private static UsuarioDto MapToUsuarioDto(Usuario usuario)
     {
@@ -179,19 +187,20 @@ public class UsuarioService : IUsuarioService
             usuario.Nombre,
             usuario.Correo,
             usuario.Telefono,
-            usuario.UsuarioRoles.Select(ur => ur.Rol.Nombre)
+            usuario.UsuarioRoles.Select(ur => ur.Rol.NombreNormalizado)
         );
     }
-    private static UsuarioDetalladoDto MapToUsuarioDetalladoDto(Usuario usuario, CreateSocioDto? socio, CreateEntrenadorDto? entrenador)
+    private static UsuarioDetalladoDto MapToUsuarioDetalladoDto(Usuario usuario,IEnumerable<string> roles, SocioDto? socio, EntrenadorDto? entrenador)
     {
         return new UsuarioDetalladoDto(
             usuario.Id,
             usuario.Nombre,
             usuario.Correo,
             usuario.Telefono,
-            usuario.UsuarioRoles.Select(ur => ur.Rol.Nombre),
+            roles,
             socio,
             entrenador
         );
     }
+
 }

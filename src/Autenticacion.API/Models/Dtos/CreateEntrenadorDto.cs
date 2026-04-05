@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 namespace Autenticacion.API.Models.Dtos;
 
 public record class CreateEntrenadorDto(
-        Guid UsuarioId,
 
     [Required(ErrorMessage = "la especialidad es obligatorio.")]
     [MaxLength(100, ErrorMessage = "La especialidad no puede exceder los 100 caracteres.")]
