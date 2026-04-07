@@ -4,6 +4,7 @@ using Autenticacion.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -17,11 +18,22 @@ builder.Services.AddDbContext<AutenticacionDbContext>(options =>
 //Servicios
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IRolService, RolService>();
+//Servicio de autenticacion
+builder.Services.AddScoped<AuthService>();
+//Servicios para agregar el token JWT a las solicitudes HTTP salientes
+builder.Services.AddTransient<AuthHeaderHandler>();
+builder.Services.AddHttpContextAccessor();
 //Cliente HTTP para comunicarse con GestionCliente
 builder.Services.AddHttpClient<IGestionCliente, GestionCliente>(client=>
 {
     client.BaseAddress = new Uri(config["Services:GestionCliente"]!);
     client.Timeout = TimeSpan.FromSeconds(10);
+}).AddHttpMessageHandler<AuthHeaderHandler>(); //
+
+//Políticas de autorización
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminGestion", policy => policy.RequireRole("ADMIN"));
 });
 
 // JWT 
@@ -51,11 +63,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Servers = new List<OpenApiServer> { new() { Url = "http://localhost:5225/auth" } };
+        return Task.CompletedTask;
+    });
+});
 
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -64,7 +82,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

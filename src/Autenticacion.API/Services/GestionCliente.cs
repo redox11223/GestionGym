@@ -11,45 +11,27 @@ public class GestionCliente : IGestionCliente
         _httpClient = httpClient;
     }
     
-    public async Task<CreateSocioDto> CrearSocio(CreateSocioDto crearSocioDto)
+    public async Task<SocioDto> UpsertSocio(Guid id, CreateSocioDto SocioDto)
     {
-        var response= await _httpClient.PostAsJsonAsync("api/socios", crearSocioDto);
+        var response= await _httpClient.PutAsJsonAsync($"api/socio/upsert/{id}", SocioDto);
         if(!response.IsSuccessStatusCode)
         {
-            throw new Exception("Error al crear socio");
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Error al procesar socio: {response.StatusCode} - {errorContent}");
         }
-        var socioCreado = await response.Content.ReadFromJsonAsync<CreateSocioDto>();
-        return socioCreado!;
-    }
-    public async Task<CreateEntrenadorDto> CrearEntrenador(CreateEntrenadorDto crearEntrenadorDto)
-    {
-        var response= await _httpClient.PostAsJsonAsync("api/entrenadores", crearEntrenadorDto);
-        if(!response.IsSuccessStatusCode)
-        {
-            throw new Exception("Error al crear entrenador");
-        }
-        var entrenadorCreado = await response.Content.ReadFromJsonAsync<CreateEntrenadorDto>();
-        return entrenadorCreado!;
-    }
-    public async Task<CreateSocioDto> UpsertSocio(CreateSocioDto actualizarSocioDto)
-    {
-        var response= await _httpClient.PutAsJsonAsync($"api/socios/upsert/{actualizarSocioDto.UsuarioId}", actualizarSocioDto);
-        if(!response.IsSuccessStatusCode)
-        {
-            throw new Exception("Error al actualizar socio");
-        }
-        var socioActualizado = await response.Content.ReadFromJsonAsync<CreateSocioDto>();
+        var socioActualizado = await response.Content.ReadFromJsonAsync<SocioDto>();
         return socioActualizado!;
     }
 
-    public async Task<CreateEntrenadorDto> UpsertEntrenador(CreateEntrenadorDto actualizarEntrenadorDto)
+    public async Task<EntrenadorDto> UpsertEntrenador(Guid id, CreateEntrenadorDto EntrenadorDto)
     {
-        var response= await _httpClient.PutAsJsonAsync($"api/entrenadores/upsert/{actualizarEntrenadorDto.UsuarioId}", actualizarEntrenadorDto);
+        var response= await _httpClient.PutAsJsonAsync($"api/entrenador/upsert/{id}", EntrenadorDto);
         if(!response.IsSuccessStatusCode)
         {
-            throw new Exception("Error al actualizar entrenador");
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Error al procesar entrenador: {response.StatusCode} - {errorContent}");
         }
-        var entrenadorActualizado = await response.Content.ReadFromJsonAsync<CreateEntrenadorDto>();
+        var entrenadorActualizado = await response.Content.ReadFromJsonAsync<EntrenadorDto>();
         return entrenadorActualizado!;
     }
 

@@ -6,8 +6,8 @@ public record class UsuarioDetalladoDto(
     string Correo,
     string Telefono,
     IEnumerable<string> Roles,
-    CreateSocioDto? Socio,
-    CreateEntrenadorDto? Entrenador
+    SocioDto? Socio,
+    EntrenadorDto? Entrenador
 )
 {
 

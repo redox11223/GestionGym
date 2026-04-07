@@ -27,20 +27,22 @@ public class GestionClientesDbContext:DbContext
         {
             entity.HasKey(se => new { se.SocioId, se.EntrenadorId });
 
-            entity.HasOne<Socios>()
-                  .WithMany() 
+            entity.HasOne(se=> se.Socio)
+                  .WithMany(s=> s.SocioEntrenadores) 
                   .HasForeignKey(se => se.SocioId)
                   .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne<Entrenadores>()
-                  .WithMany()
+            entity.HasOne(se=> se.Entrenador)
+                  .WithMany(e => e.SocioEntrenadores)
                   .HasForeignKey(se => se.EntrenadorId)
-                  .OnDelete(DeleteBehavior.ClientSetNull); 
+                  .OnDelete(DeleteBehavior.Cascade); 
         });
 
         modelBuilder.Entity<Membresias>()
             .Property(m => m.Precio)
             .HasPrecision(18, 2);
-
+        modelBuilder.Entity<SocioMembresia>()
+            .Property(sm => sm.MontoPagado)
+            .HasPrecision(18, 2);  
     }
 }

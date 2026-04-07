@@ -12,7 +12,7 @@ public class GestionCliente : IGestionCliente
 
     public async Task ObtenerDatosEntrenador(Guid usuarioId)
     {
-        var response = await _httpClient.GetAsync($"api/entrenadores/{usuarioId}");
+        var response = await _httpClient.GetAsync($"api/entrenador/{usuarioId}");
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception("Error al obtener datos del entrenador");
@@ -21,7 +21,7 @@ public class GestionCliente : IGestionCliente
 
     public async Task ObtenerDatosSocio(Guid usuarioId)
     {
-        var response = await _httpClient.GetAsync($"api/socios/{usuarioId}");
+        var response = await _httpClient.GetAsync($"api/socio/{usuarioId}");
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception("Error al obtener datos del socio");

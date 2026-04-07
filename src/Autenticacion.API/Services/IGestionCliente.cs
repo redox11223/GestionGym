@@ -5,8 +5,6 @@ namespace Autenticacion.API.Services;
 
 public interface IGestionCliente
 {
-    Task<CreateSocioDto> CrearSocio(CreateSocioDto crearSocioDto);
-    Task<CreateEntrenadorDto> CrearEntrenador(CreateEntrenadorDto crearEntrenadorDto);
-    Task<CreateSocioDto> UpsertSocio(CreateSocioDto actualizarSocioDto);
-    Task<CreateEntrenadorDto> UpsertEntrenador(CreateEntrenadorDto actualizarEntrenadorDto);
+    Task<SocioDto> UpsertSocio(Guid id, CreateSocioDto actualizarSocioDto);
+    Task<EntrenadorDto> UpsertEntrenador(Guid id, CreateEntrenadorDto actualizarEntrenadorDto);
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Autenticacion.API.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -37,7 +37,7 @@ namespace Autenticacion.API.Controllers
             
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminGestion")]
         [HttpPost("register")]
         public async Task<IActionResult> CrearUsuario(CreateUsuarioDto request)
         {

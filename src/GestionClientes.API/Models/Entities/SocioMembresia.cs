@@ -1,9 +1,9 @@
 namespace GestionClientes.API.Models;
 public class SocioMembresia
 {
-    public int SocioMembresiaId { get; set; }
-    public int SocioID { get; set; }
-    public int MembresiaID { get; set; }
+    public Guid SocioMembresiaId { get; set; }
+    public Guid SocioID { get; set; }
+    public Guid MembresiaID { get; set; }
     public DateOnly FechaInicio { get; set; }
     public DateOnly FechaFin { get; set;}
     public required String Estado { get; set; }

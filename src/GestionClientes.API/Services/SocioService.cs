@@ -15,53 +15,35 @@ public class SocioService : ISocioService
 
     public async Task<SocioDto> UpsertSocioAsync(Guid id, CreateSocioDto createSocioDto)
     {
-        var socioExistente = _context.Socios.FirstOrDefault(s => s.Id == id);
-        if (socioExistente != null)
-        {
-            socioExistente.UsuarioId = createSocioDto.UsuarioId;
-            socioExistente.FechaNacimiento = createSocioDto.FechaNacimiento;
-            socioExistente.Genero = createSocioDto.Genero;
-            socioExistente.AlturaCm = createSocioDto.AlturaCm;
-            socioExistente.PesoKg = createSocioDto.PesoKg;
-            socioExistente.EmergenciaNombre = createSocioDto.EmergenciaNombre;
-            socioExistente.EmergenciaTelefono = createSocioDto.EmergenciaTelefono;
-            socioExistente.EstaActivo = createSocioDto.EstaActivo;
-
-            _context.Socios.Update(socioExistente);
-            await _context.SaveChangesAsync();
-            return MapToDto(socioExistente);
-        }
-        else
-        {
-            var socio = new Socios
+        var socioExistente = await _context.Socios.FirstOrDefaultAsync(s => s.Id == id);
+        if (socioExistente == null){
+            socioExistente = new Socios
             {
-                UsuarioId = createSocioDto.UsuarioId,
-                FechaNacimiento = createSocioDto.FechaNacimiento,
+                Id = id,
                 Genero = createSocioDto.Genero,
-                AlturaCm = createSocioDto.AlturaCm,
-                PesoKg = createSocioDto.PesoKg,
-                EmergenciaNombre = createSocioDto.EmergenciaNombre,
-                EmergenciaTelefono = createSocioDto.EmergenciaTelefono,
-                FechaRegistro = DateOnly.FromDateTime(DateTime.UtcNow),
-                EstaActivo = true
             };
-
-            _context.Socios.Add(socio);
-            await _context.SaveChangesAsync();
-            return MapToDto(socio);
+            _context.Socios.Add(socioExistente);
         }
-    }
+        socioExistente.UsuarioId = id;
+        socioExistente.FechaNacimiento = createSocioDto.FechaNacimiento;
+        socioExistente.Genero = createSocioDto.Genero;
+        socioExistente.AlturaCm = createSocioDto.AlturaCm;
+        socioExistente.PesoKg = createSocioDto.PesoKg;
+        socioExistente.EmergenciaNombre = createSocioDto.EmergenciaNombre;
+        socioExistente.EmergenciaTelefono = createSocioDto.EmergenciaTelefono;
+        await _context.SaveChangesAsync();
+        return MapToDto(socioExistente);
+        }
     public async Task<SocioDto> ActualizarSocioAsync(Guid id, CreateSocioDto updateSocioDto)
     {
         var socio = await _context.Socios.FirstOrDefaultAsync(s => s.Id == id) ?? throw new KeyNotFoundException($"No se encontró el socio con id {id}");
-        socio.UsuarioId = updateSocioDto.UsuarioId;
+        socio.UsuarioId = id;
         socio.FechaNacimiento = updateSocioDto.FechaNacimiento;
         socio.Genero = updateSocioDto.Genero;
         socio.AlturaCm = updateSocioDto.AlturaCm;
         socio.PesoKg = updateSocioDto.PesoKg;
         socio.EmergenciaNombre = updateSocioDto.EmergenciaNombre;
         socio.EmergenciaTelefono = updateSocioDto.EmergenciaTelefono;
-        socio.EstaActivo = updateSocioDto.EstaActivo;
         _context.Socios.Update(socio);
         await _context.SaveChangesAsync();
         return MapToDto(socio);
@@ -71,15 +53,12 @@ public class SocioService : ISocioService
     {
         var socio = new Socios
         {
-            UsuarioId = createSocioDto.UsuarioId,
             FechaNacimiento = createSocioDto.FechaNacimiento,
             Genero = createSocioDto.Genero,
             AlturaCm = createSocioDto.AlturaCm,
             PesoKg = createSocioDto.PesoKg,
             EmergenciaNombre = createSocioDto.EmergenciaNombre,
             EmergenciaTelefono = createSocioDto.EmergenciaTelefono,
-            FechaRegistro = DateOnly.FromDateTime(DateTime.UtcNow),
-            EstaActivo = true
         };
 
         _context.Socios.Add(socio);
@@ -112,26 +91,25 @@ public class SocioService : ISocioService
                 s.PesoKg,
                 s.EmergenciaNombre,
                 s.EmergenciaTelefono,
-                s.FechaRegistro,
-                s.EstaActivo))
+                s.FechaCreacion
+                ))
             .ToListAsync();
 
     }
-    private static SocioDto MapToDto(Socios socio)
-    {
-        return new SocioDto
-        (
-            socio.Id,
-            socio.UsuarioId,
-            socio.FechaNacimiento,
-            socio.Genero,
-            socio.AlturaCm,
-            socio.PesoKg,
-            socio.EmergenciaNombre,
-            socio.EmergenciaTelefono,
-            socio.FechaRegistro,
-            socio.EstaActivo
-        );
-    }
+        private static SocioDto MapToDto(Socios socio)
+        {
+            return new SocioDto
+            (
+                socio.Id,
+                socio.UsuarioId,
+                socio.FechaNacimiento,
+                socio.Genero,
+                socio.AlturaCm,
+                socio.PesoKg,
+                socio.EmergenciaNombre,
+                socio.EmergenciaTelefono,
+                socio.FechaCreacion
+            );
+        }
 
 }

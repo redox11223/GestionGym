@@ -26,7 +26,7 @@ public class AuthService(IConfiguration config)
         };
 
         // Agregar roles usando la clave estándar de roles de JWT
-        var roles = usuario.UsuarioRoles.Select(r => r.Rol.Nombre).ToArray();
+        var roles = usuario.UsuarioRoles.Select(r => r.Rol.NombreNormalizado).ToArray();
         claims.Add("role", roles); 
 
         var tokenDescriptor = new SecurityTokenDescriptor

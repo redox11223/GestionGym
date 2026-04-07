@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Entrenamiento.API.Data;
 using Entrenamiento.API.Services;
+using Microsoft.OpenApi;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,15 @@ builder.Services.AddDbContext<EntrenamientoDbContext>(options =>
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Servers = new List<OpenApiServer> { new() { Url = "http://localhost:5225/entrenamiento" } };
+        return Task.CompletedTask;
+    });
+});
+
 
 //Servicios
 builder.Services.AddScoped<IEjerciciosService, EjerciciosServices>();

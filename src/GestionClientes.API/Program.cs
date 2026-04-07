@@ -4,6 +4,7 @@ using GestionClientes.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -17,10 +18,23 @@ builder.Services.AddScoped<ISocioService, SocioService>();
 builder.Services.AddScoped<IEntrenadorService, EntrenadorService>();
 builder.Services.AddScoped<IMembresiaService, MembresiaService>();
 
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Servers = new List<OpenApiServer> { new() { Url = "http://localhost:5225/gestion" } };
+        return Task.CompletedTask;
+    });
+});
 
+//Políticas de autorización
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminGestion", policy => policy.RequireRole("ADMIN"));
+});
 
 // JWT 
 var key = Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]!);
@@ -49,6 +63,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

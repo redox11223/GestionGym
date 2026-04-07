@@ -25,12 +25,12 @@ public class EntrenamientoDbContext : DbContext
 
                 entity.ToTable(t => t.HasCheckConstraint("CK_RutinaEjercicios_Orden", "[Orden] > 0"));
 
-                entity.HasOne<Rutinas>()
-                      .WithMany() 
+                entity.HasOne(re=> re.Rutina)
+                      .WithMany(r=> r.RutinaEjercicios) 
                       .HasForeignKey(re => re.RutinaId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne<Ejercicios>()
+                entity.HasOne(re=> re.Ejercicio)
                       .WithMany()
                       .HasForeignKey(re => re.EjercicioId)
                       .OnDelete(DeleteBehavior.ClientSetNull); 
