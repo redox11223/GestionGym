@@ -14,7 +14,7 @@ public record class CreateMembresiasDto
     string  Descripcion,
 
     [Required(ErrorMessage = "El campo DuracionDias es obligatorio.")]
-    [Range(1, int.MaxValue, ErrorMessage = "La duración en días debe ser un número positivo.")]
+    [Range(1, 1095, ErrorMessage = "La duración debe estar entre 1 y 1095 días (3 años).")]
     int DuracionDias,
 
     [Required(ErrorMessage = "El campo Precio es obligatorio.")]
@@ -22,8 +22,6 @@ public record class CreateMembresiasDto
     decimal Precio,
 
     [Required(ErrorMessage = "El campo 'EsRenovable' es obligatorio.")]
-    bool EsRenovable,
+    bool EsRenovable
     
-    [Required(ErrorMessage = "El campo 'EstaActivo' es obligatorio.")]
-    bool EstaActivo
 );

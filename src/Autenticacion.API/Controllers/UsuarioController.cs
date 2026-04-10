@@ -1,10 +1,12 @@
 using Autenticacion.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Autenticacion.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy= "AdminGestion")]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;

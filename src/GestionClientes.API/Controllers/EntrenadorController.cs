@@ -1,5 +1,6 @@
 using GestionClientes.API.Models.Dtos;
 using GestionClientes.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace GestionClientes.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EntrenadorController : ControllerBase
     {
         private readonly IEntrenadorService _entrenadorService;
@@ -16,10 +18,18 @@ namespace GestionClientes.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminGestion")]
         public async Task<IActionResult> CrearEntrenador(CreateEntrenadoresDto createEntrenadorDto)
         {
             var entrenador = await _entrenadorService.CrearEntrenadorAsync(createEntrenadorDto);
             return CreatedAtAction(nameof(ObtenerEntrenadorById), new { id = entrenador.Id }, entrenador);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListarEntrenadores()
+        {
+            var entrenadores = await _entrenadorService.ObtenerEntrenadoresAsync();
+            return Ok(entrenadores);
         }
 
         [HttpGet("{id}")]
@@ -30,6 +40,8 @@ namespace GestionClientes.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "AdminGestion")]
+
         public async Task<IActionResult> ActualizarEntrenador(Guid id, CreateEntrenadoresDto updateEntrenadorDto)
         {
             var entrenador = await _entrenadorService.ActualizarEntrenadorAsync(id, updateEntrenadorDto);
@@ -37,6 +49,7 @@ namespace GestionClientes.API.Controllers
         }
 
         [HttpPut("upsert/{id}")]
+        [Authorize(Policy = "AdminGestion")]
         public async Task<ActionResult<EntrenadoresDto>> UpsertEntrenador(Guid id, CreateEntrenadoresDto updateEntrenadorDto)
         {
             var entrenador = await _entrenadorService.UpsertEntrenadorAsync(id, updateEntrenadorDto);
@@ -44,6 +57,8 @@ namespace GestionClientes.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminGestion")]
+
         public async Task<IActionResult> EliminarEntrenador(Guid id)
         {
             await _entrenadorService.EliminarEntrenadorAsync(id);

@@ -1,6 +1,10 @@
-@Host = http://localhost:5069
+@Host = http://localhost:5225
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJneW0tc2VydmljZXMiLCJpc3MiOiJhdXRlbnRpY2FjaW9uLWFwaSIsImV4cCI6MTc3NTQyMTg4OCwic3ViIjoiN2NmNDY1ZjctNDZmZi00MTY3LWZmMmMtMDhkZTkyYzRjOTQ2IiwiZW1haWwiOiJhZG1pbjFAZ3ltLmNvbSIsIm5hbWUiOiJtaWd1ZWwiLCJqdGkiOiJjMDEwMGE4Yy1jYTVkLTRmOTUtODIwNS1mNmNhNzVmNzY3YjAiLCJyb2xlIjpbIkFETUlOIl0sImlhdCI6MTc3NTQxODI4OCwibmJmIjoxNzc1NDE4Mjg4fQ.U6466s1ydnHCZDcUbF_y267PYQ46X4AKYT_wSCtTma8
 
 GET {{Host}}/weatherforecast/
 Accept: application/json
 
 ###
+GET {{Host}}/auth/api/usuario/
+Accept: application/json
+Authorization: Bearer {{token}}

@@ -15,11 +15,15 @@ public record class CreateEntrenadorDto(
     string Certificaciones,
 
     [Required(ErrorMessage = "La fecha de ingreso es obligatoria.")]
-    DateOnly FechaIngreso,
+    DateOnly FechaIngreso
 
-    [Required(ErrorMessage = "El estado activo es obligatorio.")]
-    bool EstaActivo
-)
+) : IValidatableObject
 {
-
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (FechaIngreso < DateOnly.FromDateTime(DateTime.Now))
+        {
+            yield return new ValidationResult("La fecha de ingreso no puede ser en el pasado.", new[] { nameof(FechaIngreso) });
+        }
+    }
 }
