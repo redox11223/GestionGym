@@ -2,13 +2,14 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using GestionClientes.API.Services;
 using GestionClientes.API.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace GestionClientes.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-
+[Authorize]
 public class MembresiasController : ControllerBase
 {
     private readonly IMembresiaService _membresiaService;

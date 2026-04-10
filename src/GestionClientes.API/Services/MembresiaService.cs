@@ -27,8 +27,6 @@ public class MembresiaService : IMembresiaService
         existingMembresia.DuracionDias = updateMembresiaDto.DuracionDias;
         existingMembresia.Precio = updateMembresiaDto.Precio;
         existingMembresia.EsRenovable = updateMembresiaDto.EsRenovable;
-        existingMembresia.EstaActivo = updateMembresiaDto.EstaActivo;
-
         _context.Membresias.Update(existingMembresia);
         await _context.SaveChangesAsync();
 
@@ -56,7 +54,10 @@ public class MembresiaService : IMembresiaService
 
     public async Task<bool> EliminarMembresiaAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var membresia = await _context.Membresias.FirstOrDefaultAsync(m => m.Id == id) ?? throw new KeyNotFoundException($"No se encontró la membresía con id {id}");
+        _context.Membresias.Remove(membresia);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<MembresiasDto> ObtenerMembresiaByIdAsync(Guid id)

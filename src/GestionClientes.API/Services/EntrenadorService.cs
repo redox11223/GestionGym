@@ -17,46 +17,37 @@ public class EntrenadorService : IEntrenadorService
     public async Task<EntrenadoresDto> UpsertEntrenadorAsync(Guid id, CreateEntrenadoresDto createEntrenadorDto)
     {
         var entrenadorExistente = await _context.Entrenadores.FirstOrDefaultAsync(e => e.Id == id);
-        if (entrenadorExistente != null)
-        {
-            var nombreNormalizado = createEntrenadorDto.Especialidad.Trim().ToLower();
-            entrenadorExistente.UsuarioId = createEntrenadorDto.UsuarioId;
-            entrenadorExistente.Especialidad = nombreNormalizado;
-            entrenadorExistente.Certificaciones = createEntrenadorDto.Certificaciones;
-            entrenadorExistente.FechaIngreso = createEntrenadorDto.FechaIngreso;
-            entrenadorExistente.EstaActivo = createEntrenadorDto.EstaActivo;
+        var nombreNormalizado = createEntrenadorDto.Especialidad.Trim().ToLower();
 
-            _context.Entrenadores.Update(entrenadorExistente);
-            await _context.SaveChangesAsync();
-
-            return MapToDto(entrenadorExistente);
-        }
-        else
+        if (entrenadorExistente == null)
         {
-            var nombreNormalizado = createEntrenadorDto.Especialidad.Trim().ToLower();
-            var entrenador = new Entrenadores
+            entrenadorExistente= new Entrenadores
             {
-                UsuarioId = createEntrenadorDto.UsuarioId,
+                Id = id,
+                UsuarioId = id,
                 Especialidad = nombreNormalizado,
                 Certificaciones = createEntrenadorDto.Certificaciones,
-                FechaIngreso = createEntrenadorDto.FechaIngreso,
-                EstaActivo = true
             };
 
-            _context.Entrenadores.Add(entrenador);
-            await _context.SaveChangesAsync();
-            return MapToDto(entrenador);
+            _context.Entrenadores.Add(entrenadorExistente);
+
         }
+        entrenadorExistente.Especialidad = nombreNormalizado;
+        entrenadorExistente.Certificaciones = createEntrenadorDto.Certificaciones;
+        entrenadorExistente.FechaIngreso = createEntrenadorDto.FechaIngreso;
+
+        await _context.SaveChangesAsync();
+
+        return MapToDto(entrenadorExistente);
     }
     public async Task<EntrenadoresDto> ActualizarEntrenadorAsync(Guid id, CreateEntrenadoresDto updateEntrenadorDto)
     {
         var nombreNormalizado = updateEntrenadorDto.Especialidad.Trim().ToLower();
         var entrenador = await _context.Entrenadores.FirstOrDefaultAsync(e => e.Id == id) ?? throw new KeyNotFoundException($"No se encontró el entrenador con id {id}");
-        entrenador.UsuarioId = updateEntrenadorDto.UsuarioId;
+        entrenador.UsuarioId = id;
         entrenador.Especialidad = nombreNormalizado;
         entrenador.Certificaciones = updateEntrenadorDto.Certificaciones;
         entrenador.FechaIngreso = updateEntrenadorDto.FechaIngreso;
-        entrenador.EstaActivo = updateEntrenadorDto.EstaActivo;
 
         _context.Entrenadores.Update(entrenador);
         await _context.SaveChangesAsync();
@@ -70,7 +61,6 @@ public class EntrenadorService : IEntrenadorService
         var nombreNormalizado = createEntrenadorDto.Especialidad.Trim().ToLower();
         var entrenador = new Entrenadores
         {
-            UsuarioId = createEntrenadorDto.UsuarioId,
             Especialidad = nombreNormalizado,
             Certificaciones = createEntrenadorDto.Certificaciones,
             FechaIngreso = createEntrenadorDto.FechaIngreso,

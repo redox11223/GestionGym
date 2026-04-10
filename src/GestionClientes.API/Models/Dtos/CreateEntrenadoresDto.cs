@@ -3,9 +3,6 @@ namespace GestionClientes.API.Models.Dtos;
 
 public record class CreateEntrenadoresDto
 (
-    [Required(ErrorMessage = "El ID del usuario es obligatorio.")]
-    Guid UsuarioId,
-
     [Required(ErrorMessage = "la especialidad es obligatorio.")]
     [MaxLength(100, ErrorMessage = "La especialidad no puede exceder los 100 caracteres.")]
     [RegularExpression(@"^(?!\s*$)[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", ErrorMessage = "La especialidad solo puede contener letras y no puede estar vacía o solo contener espacios")]
@@ -17,8 +14,6 @@ public record class CreateEntrenadoresDto
     string Certificaciones,
     
     [Required(ErrorMessage = "La fecha de ingreso es obligatoria.")]
-    DateOnly FechaIngreso,
+    DateOnly FechaIngreso
     
-    [Required(ErrorMessage = "El estado activo es obligatorio.")]
-    bool EstaActivo
 );

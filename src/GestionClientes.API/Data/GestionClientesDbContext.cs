@@ -22,6 +22,14 @@ public class GestionClientesDbContext:DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        //Foreign key único para UsuarioId en Socios
+        modelBuilder.Entity<Socios>()
+            .HasIndex(s => s.UsuarioId)
+            .IsUnique();
+        //Foreign key único para UsuarioId en Entrenadores
+        modelBuilder.Entity<Entrenadores>()
+            .HasIndex(e => e.UsuarioId)
+            .IsUnique();            
         // Configuración de la entidad SocioEntrenador
         modelBuilder.Entity<SocioEntrenador>(entity =>
         {

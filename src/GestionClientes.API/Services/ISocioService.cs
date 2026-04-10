@@ -11,4 +11,7 @@ public interface ISocioService
     Task<SocioDto> ActualizarSocioAsync(Guid id, CreateSocioDto updateSocioDto);
     Task EliminarSocioAsync(Guid id);
     Task<SocioDto> UpsertSocioAsync(Guid id, CreateSocioDto createSocioDto);
+    Task<bool> AsignarEntrenadorASocioAsync(Guid socioId, Guid entrenadorId);
+    Task<bool> AsignarMembresiaASocioAsync(Guid socioId,ComprarMembresiaDto comprarMembresiaDto);
+    Task<bool> ExisteSocioAsync(Guid id);  
 }
